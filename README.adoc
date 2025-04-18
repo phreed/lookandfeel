@@ -1,0 +1,102 @@
+= Custom theming for Cameo/MagicDraw
+
+== Problem statement
+
+Cameo/MagicDraw on Linux operating system does not look nearly as professional as in Windows.
+This is due fact that Cameo/Magicdraw uses 
+the standard look and feel which is not visually appealing and
+the fonts are very small, 
+especially on a smaller (14-inch) screen.
+
+== Solution
+
+I created a plugin enabling users to use the wonderful open source 
+FlatLAF look and feel theme (https://www.formdev.com/flatlaf/). 
+
+== Demo
+
+![image](https://user-images.githubusercontent.com/8182138/194689638-86fe9c18-868b-44a4-a4e8-8d8419bac6af.png)
+
+== Download release
+
+You can directly download the release without build from the following address:
+
+https://github.com/modeldriven-hu/lookandfeel/releases/tag/1.0.0
+
+== Build the project
+
+=== Requirements
+
+- Cameo/MagicDraw latest
+- Java JDK 11
+- Maven
+
+=== Check out the repository
+
+`git clone https://github.com/modeldriven-hu/lookandfeel.git`
+
+=== Configure environment variable
+
+This project makes use of `pixi` to mangage the development environment.
+
+=== Building
+
+Execute `pixi run build` in the git folder.
+https://pixi.sh/latest/#alternative-installation-methods
+
+The following shows all of the defined tasks.
+[source,bash]
+----
+pixi run
+----
+
+== Installation
+
+[source,bash]
+----
+pixi run install
+----
+
+The install has several steps.
+
+* install the plugin zip
+* install the flatlaf jar into `CAMEO_ROOT/lib`
+* update the classpath in the manifest
+
+The first two steps are simple (read the `pixi.toml` for details).
+The third needs a bit of explanation.
+
+=== Modify the classpath
+
+Although Cameo is able to load our plugin at startup but it does not know about the dependent FlatLaf library.
+The solution for the problem is to add the library to the classpath of Cameo directly.
+
+==== Revise classpath.jar 
+
+There is a modified copy of the MANIFEST.MF in link:resources/MANIFEST.MF.
+A fresh copy can be retrieved with the following.
+[source,bash]
+----
+pixi run manifest xf
+----
+
+Add the text `flatlaf-2.5.jar` to the end of `resources/MANIFEST.MF` at the end right after `y.jar`.
+
+Replace the `MANIFEST.MF` in the `CAMEO_ROOT/lib/classpath.jar`.
+[source,bash]
+----
+pixi run manifest uf
+----
+
+=== Restart
+
+In order to use the plugin you need to restart Cameo.
+
+== Usage
+
+In the `Options` menu select `Flat look and feel` then select
+the desired theme and press Apply.
+
+== Reference
+
+* https://docs.nomagic.com/display/DEVG2024xR2/Plugins

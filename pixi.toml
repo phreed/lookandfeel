@@ -1,0 +1,60 @@
+[workspace]
+authors = ["Fredrick Eisele <fred.eisele@vanderbilt.edu>"]
+channels = ["conda-forge"]
+name = "cameo_look_and_feel"
+platforms = ["linux-64"]
+version = "0.1.0"
+
+[tasks.clean]
+cmd = ["rm", "-rf", "./target"]
+
+[feature.install.tasks.install-lookandfeel]
+cmd = [
+  "unzip", "-o",
+  "target/hu.modeldriven.cameo.lookandfeel.zip",
+  "-d", "$CAMEO_ROOT/plugins",
+  ]
+[feature.install.tasks.install-lookandfeel.env]
+CAMEO_ROOT = "$HOME/Packages/cameo/csm_root"
+
+[feature.install.tasks.manifest]
+cmd = [
+  "jar", "{{ action }}",
+  "$CAMEO_ROOT/lib/classpath.jar",
+  "META-INF/MANIFEST.MF",
+  ]
+cwd = "resources"
+args = [
+  { "arg" = "action", "default" = "xf" },
+]
+[feature.install.tasks.manifest.env]
+CAMEO_ROOT = "$HOME/Packages/cameo/csm_root"
+
+[feature.install.tasks.install]
+depends-on = ["install-lookandfeel" ] 
+
+[feature.install.dependencies]
+openjdk = ">=11.0,<12.0"
+
+[feature.build.tasks.build]
+cmd = ["mvn", "clean", "package"]
+[feature.build.tasks.build.env]
+CAMEO_ROOT = "$HOME/Packages/cameo/csm_root"
+
+[feature.build.dependencies]
+openjdk = ">=11.0,<12.0"
+maven = ">=3.9,<4.0"
+
+[feature.model.tasks.model]
+cmd = "$CAMEO_ROOT/bin/csm"
+[feature.model.tasks.model.env]
+CAMEO_ROOT = "$HOME/Packages/cameo/csm_root"
+GTK_SCALE = "2"
+QT_SCALE_FACTOR = "2"
+
+[feature.model.dependencies]
+openjdk = ">=11.0,<12.0"
+
+[environments]
+dev = { features = ["install", "build", "model"] }
+
